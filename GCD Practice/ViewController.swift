@@ -34,10 +34,10 @@ class ViewController: UIViewController {
         
         super.viewDidLoad()
         
-        gcdGroup()
+        //gcdGroup()
         
         
-//        gcdSemaphore()
+        gcdSemaphore()
 
     }
 
@@ -45,21 +45,29 @@ class ViewController: UIViewController {
         
         self.dataManager.fetchData(endPoint: numberForEndPoint, completion: { (result) in
             
+            self.semaphoreOne.wait()
+            
             switch result {
                 
             case .success(let data):
                 
-                let road = data.result.results[0].road
+//                let road = data.result.results[0].road
+//
+//                let speedLimit = data.result.results[0].speedLimit
+//
+//                self.roads.append(road)
+//
+//                self.speedLimits.append(speedLimit)
                 
-                let speedLimit = data.result.results[0].speedLimit
+                DispatchQueue.main.async {
+                    
+                    roadLabel.text = data.result.results[0].road
+                    
+                    speedLimitLabel.text = data.result.results[0].speedLimit
+                    
+                }
                 
-                self.roads.append(road)
-                
-                self.speedLimits.append(speedLimit)
-                
-//                self.semaphoreOne.signal()
-                
-                self.group.leave()
+//                self.group.leave()
         
             case .failure(let error): print(error)
             
@@ -71,71 +79,71 @@ class ViewController: UIViewController {
         })
     }
     
-    func gcdGroup() {
-
-        DispatchQueue.main.async(group: group) {
-
-            self.group.enter()
-            self.getData(numberForEndPoint: "0", roadLabel: self.roadOne, speedLimitLabel: self.limitOne)
-
-        }
-
-        DispatchQueue.main.async(group: group) {
-
-            self.group.enter()
-            self.getData(numberForEndPoint: "10", roadLabel: self.roadTwo, speedLimitLabel: self.limitTwo)
-
-        }
-
-        DispatchQueue.main.async(group: group) {
-
-            self.group.enter()
-            self.getData(numberForEndPoint: "20", roadLabel: self.roadThree, speedLimitLabel: self.limitThree)
-
-        }
-
-        group.notify(queue: DispatchQueue.main){
-            self.roadOne.text = self.roads[0]
-            self.roadTwo.text = self.roads[1]
-            self.roadThree.text = self.roads[2]
-            self.limitOne.text = self.speedLimits[0]
-            self.limitTwo.text = self.speedLimits[1]
-            self.limitThree.text = self.speedLimits[2]
-        }
-
-    }
-    
-//    func gcdSemaphore() {
+//    func gcdGroup() {
 //
-//        DispatchQueue.main.async {
+//        DispatchQueue.main.async(group: group) {
 //
+//            self.group.enter()
 //            self.getData(numberForEndPoint: "0", roadLabel: self.roadOne, speedLimitLabel: self.limitOne)
-//            self.semaphoreOne.wait()
-//            self.roadOne.text = self.roads[0]
-//            self.limitOne.text = self.speedLimits[0]
-//
 //
 //        }
 //
-//        DispatchQueue.main.async {
+//        DispatchQueue.main.async(group: group) {
 //
+//            self.group.enter()
 //            self.getData(numberForEndPoint: "10", roadLabel: self.roadTwo, speedLimitLabel: self.limitTwo)
-//            self.semaphoreOne.wait()
-//            self.roadTwo.text = self.roads[1]
-//            self.limitTwo.text = self.speedLimits[1]
 //
 //        }
 //
-//        DispatchQueue.main.async {
+//        DispatchQueue.main.async(group: group) {
 //
+//            self.group.enter()
 //            self.getData(numberForEndPoint: "20", roadLabel: self.roadThree, speedLimitLabel: self.limitThree)
-//            self.semaphoreThree.wait()
-//            self.roadThree.text = self.roads[2]
-//            self.limitThree.text = self.speedLimits[2]
 //
+//        }
+//
+//        group.notify(queue: DispatchQueue.main){
+//            self.roadOne.text = self.roads[0]
+//            self.roadTwo.text = self.roads[1]
+//            self.roadThree.text = self.roads[2]
+//            self.limitOne.text = self.speedLimits[0]
+//            self.limitTwo.text = self.speedLimits[1]
+//            self.limitThree.text = self.speedLimits[2]
 //        }
 //
 //    }
+    
+    func gcdSemaphore() {
+
+        DispatchQueue.main.async {
+
+            self.getData(numberForEndPoint: "0", roadLabel: self.roadOne, speedLimitLabel: self.limitOne)
+
+//            self.roadOne.text = self.roads[0]
+//            self.limitOne.text = self.speedLimits[0]
+
+
+        }
+
+        DispatchQueue.main.async {
+
+            self.getData(numberForEndPoint: "10", roadLabel: self.roadTwo, speedLimitLabel: self.limitTwo)
+
+//            self.roadTwo.text = self.roads[1]
+//            self.limitTwo.text = self.speedLimits[1]
+
+        }
+
+        DispatchQueue.main.async {
+
+            self.getData(numberForEndPoint: "20", roadLabel: self.roadThree, speedLimitLabel: self.limitThree)
+
+//            self.roadThree.text = self.roads[2]
+//            self.limitThree.text = self.speedLimits[2]
+
+        }
+
+    }
     
     
     
